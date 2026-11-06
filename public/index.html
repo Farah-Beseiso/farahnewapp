@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini AI Çeviri | Akıllı Makine Çevirisi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Başlık Çubuğu -->
+    <header class="app-header">
+      <div class="logo">
+        <span class="logo-icon">✨</span>
+        <div class="logo-text">
+          <h1>Gemini Çeviri</h1>
+          <span class="badge">AI v2.5</span>
+        </div>
+      </div>
+      <p class="tagline">Gemini API ile güçlendirilmiş, alan ve üslup uyumlu akıllı çeviri</p>
+    </header>
+
+    <!-- Kontrol Paneli: Alan, Üslup ve Terimce Açma -->
+    <section class="controls-panel">
+      <div class="control-group">
+        <label for="domainSelect">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          Çeviri Alanı
+        </label>
+        <select id="domainSelect">
+          <option value="Genel">Genel</option>
+          <option value="Hukuk">Hukuk</option>
+          <option value="Tıp">Tıp</option>
+          <option value="Teknik">Teknik / Yazılım</option>
+          <option value="Edebi">Edebi</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="toneSelect">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+          Üslup / Ton
+        </label>
+        <select id="toneSelect">
+          <option value="Resmi">Resmi (Formal)</option>
+          <option value="Gündelik">Gündelik (Samimi / Casual)</option>
+        </select>
+      </div>
+
+      <button id="toggleGlossaryBtn" class="btn-secondary" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        <span>Terimce (Glossary)</span>
+      </button>
+    </section>
+
+    <!-- Terimce Kutusu (Açılır/Kapanır) -->
+    <div id="glossarySection" class="glossary-section hidden">
+      <div class="glossary-header">
+        <label for="glossaryInput">
+          <strong>Özel Terimce Kuralları:</strong> Her satıra <code>kaynak terim = hedef terim</code> yazın.
+        </label>
+        <span class="glossary-hint">Örnek: machine learning = makine öğrenimi</span>
+      </div>
+      <textarea id="glossaryInput" placeholder="login = giriş yap&#10;cloud computing = bulut bilişim&#10;user interface = kullanıcı arayüzü" rows="3"></textarea>
+    </div>
+
+    <!-- Hata Bildirim Kutusu -->
+    <div id="errorMessage" class="error-banner hidden" role="alert">
+      <span class="error-icon">⚠️</span>
+      <div class="error-content">
+        <strong id="errorTitle">Hata Oluştu</strong>
+        <p id="errorText"></p>
+      </div>
+      <button id="closeErrorBtn" class="btn-icon" aria-label="Kapat">&times;</button>
+    </div>
+
+    <!-- İki Sütunlu Çeviri Alanı -->
+    <main class="translation-layout">
+      <!-- Kaynak Metin Kartı -->
+      <div class="card card-source">
+        <div class="card-header">
+          <div class="lang-selector">
+            <label for="sourceLang" class="sr-only">Kaynak Dil</label>
+            <select id="sourceLang">
+              <option value="İngilizce" selected>İngilizce</option>
+              <option value="Türkçe">Türkçe</option>
+              <option value="Almanca">Almanca</option>
+              <option value="İspanyolca">İspanyolca</option>
+              <option value="Fransızca">Fransızca</option>
+              <option value="İtalyanca">İtalyanca</option>
+              <option value="Rusça">Rusça</option>
+              <option value="Arapça">Arapça</option>
+            </select>
+          </div>
+          <button id="swapLangsBtn" class="btn-icon swap-btn" title="Dilleri Değiştir" aria-label="Dilleri Değiştir">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"></path></svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <textarea id="sourceText" placeholder="Çevirmek istediğiniz metni buraya yazın veya yapıştırın..." autofocus></textarea>
+        </div>
+        <div class="card-footer">
+          <span id="charCount" class="char-count">0 karakter</span>
+          <div class="action-buttons">
+            <button id="clearSourceBtn" class="btn-text" type="button">Temizle</button>
+            <button id="translateBtn" class="btn-primary" type="button">
+              <span class="btn-spinner hidden" id="loadingSpinner"></span>
+              <span id="translateBtnText">Çevir</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hedef Metin Kartı -->
+      <div class="card card-target">
+        <div class="card-header">
+          <div class="lang-selector">
+            <label for="targetLang" class="sr-only">Hedef Dil</label>
+            <select id="targetLang">
+              <option value="Türkçe" selected>Türkçe</option>
+              <option value="İngilizce">İngilizce</option>
+              <option value="Almanca">Almanca</option>
+              <option value="İspanyolca">İspanyolca</option>
+              <option value="Fransızca">Fransızca</option>
+              <option value="İtalyanca">İtalyanca</option>
+              <option value="Rusça">Rusça</option>
+              <option value="Arapça">Arapça</option>
+            </select>
+          </div>
+          <div class="header-actions">
+            <button id="copyBtn" class="btn-action" title="Çeviriyi Kopyala" disabled>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span id="copyBtnText">Kopyala</span>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="targetPlaceholder" class="placeholder-text">
+            Çeviri burada görünecektir...
+          </div>
+          <textarea id="targetText" readonly placeholder=""></textarea>
+        </div>
+        <div class="card-footer">
+          <span id="targetCharCount" class="char-count">0 karakter</span>
+          <span id="statusIndicator" class="status-indicator">Hazır</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
