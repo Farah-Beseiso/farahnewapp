@@ -1,0 +1,15 @@
+{
+  "name": "gemini-ceviri",
+  "version": "1.0.0",
+  "description": "Gemini API tabanlı makine çevirisi uygulaması",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
